@@ -12,7 +12,6 @@ namespace CoreBattle.Infrastructure.Data
     {
         private readonly AppContext context;
         private DbSet<T> entities;
-        string errorMessage = string.Empty;
 
         public Repository(AppContext context)
         {
