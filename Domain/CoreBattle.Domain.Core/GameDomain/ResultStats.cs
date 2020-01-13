@@ -8,6 +8,6 @@ namespace CoreBattle.Domain.Core.GameDomain
     {
         public Player Winner { get; set; }
         public int CountOfSteps { get; set; }
-        public List<Ship> Ships { get; set; }
+        public List<ShipInfo> ShipsInfo { get; set; }
     }
 }
