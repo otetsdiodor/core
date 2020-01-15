@@ -10,5 +10,9 @@ namespace CoreBattle.Domain.Core.GameDomain
         public int CountOfSteps { get; set; }
         public List<ShipInfo> ShipsInfo { get; set; }
         public DateTime EndTime { get; set; }
+        public ResultStats()
+        {
+
+        }
     }
 }

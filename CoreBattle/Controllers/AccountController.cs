@@ -68,7 +68,7 @@ namespace CoreBattle.Controllers
                     if (!string.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                         return Redirect(model.ReturnUrl);
                     else
-                        return RedirectToAction("Index", "Home");
+                        return RedirectToAction("Index", "Gameslist");
                 }
                 else
                     ModelState.AddModelError("", "Неправильный логин и (или) пароль");

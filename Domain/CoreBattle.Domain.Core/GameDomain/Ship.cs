@@ -6,21 +6,25 @@ namespace CoreBattle.Domain.Core.GameDomain
 {
     public enum ShipState
     {
-        Beaten,
-        Full
+        Damaged,
+        Full,
+        Destroyed
     }
 
     public class Ship : Entity
     {
-        public Guid? ResultStatsId { get; set; }
-        //public ResultStats ResultStats { get; set; }
         public List<Coords> Coords { get; set; }
         public ShipState State { get; set; }
         public int Length { get; set; }
-        public Ship(int length)
+        public Ship(int length,List<Coords> coords)
         {
+            Coords = coords;
             Length = length;
             State = ShipState.Full;
+        }
+        public Ship()
+        {
+
         }
     }
 }

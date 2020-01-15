@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreBattle.Domain.Core.GameDomain;
 using CoreBattle.Domain.Core.ManageDomain;
 using CoreBattle.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
@@ -24,31 +25,29 @@ namespace CoreBattle
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<Infrastructure.Data.AppContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("EntityConnection")));
             services.AddDbContext<ApplicationContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();
 
+
+            services.AddTransient<Repository<Game>>();
+            services.AddTransient<Repository<Player>>();
+
             services.AddControllersWithViews();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
-            //else
-            //{
-            //    app.UseExceptionHandler("/Home/Error");
-            //    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-            //    app.UseHsts();
-            //}
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();

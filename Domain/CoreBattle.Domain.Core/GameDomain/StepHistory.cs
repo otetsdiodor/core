@@ -10,16 +10,20 @@ namespace CoreBattle.Domain.Core.GameDomain
         public int x { get; set; }
         public int y { get; set; }
         public CellState CellState { get; set; }
-        public ShipState ShipState { get; set; }
+        //public ShipState ShipState { get; set; }
         public Guid GameId { get; set; }
-        public StepHistory(Player pl, Game g, Cell cell, ShipState shipState)
+        public StepHistory(Player pl, Game g, Cell cell/*, ShipState shipState*/)
         {
             PlayerId = pl.Id;
             x = cell.X;
             y = cell.Y;
             CellState = cell.State;
-            ShipState = shipState;
+            //ShipState = shipState;
             GameId = g.Id;
+        }
+        public StepHistory()
+        {
+
         }
     }
 }

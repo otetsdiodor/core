@@ -9,5 +9,9 @@ namespace CoreBattle.Domain.Core.GameDomain
         public int Length { get; set; }
         public int CountLivePart { get; set; }
 
+        public ShipInfo()
+        {
+
+        }
     }
 }
