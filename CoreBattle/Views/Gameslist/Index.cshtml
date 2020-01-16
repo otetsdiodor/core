@@ -1,5 +1,7 @@
 ﻿<div>
-    <button type="button" class="btn btn-dark" onclick="GetMessage()">CREATE NEW GAME</button>
+    <form method="post" class="col-md" asp-controller="Gameslist" asp-action="CreateGame">
+        <input class="btn btn-dark" type="submit" value="CREATE NEW GAME" />
+    </form>
     <Br>
     @foreach (var game in ViewBag.Games)
     {
@@ -8,15 +10,9 @@
                 <h4>@game.Id</h4>
             </div>
             <form method="post" class="col-md" asp-controller="Gameslist" asp-action="ConnectToGame">
-                <input type="hidden" name="gameId" value="@game.Id"/>
+                <input type="hidden" name="gameId" value="@game.Id" />
                 <input type="submit" value="Присоеденится" />
             </form>
         </div>
     }
 </div>
-
-<script>
-    function GetMessage() {
-        $.post("/Gameslist/CreateGame");
-    }
-</script>

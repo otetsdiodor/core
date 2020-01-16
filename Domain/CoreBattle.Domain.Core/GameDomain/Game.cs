@@ -41,28 +41,24 @@ namespace CoreBattle.Domain.Core.GameDomain
                 throw new ArgumentOutOfRangeException();
         }
 
-        public void Shoot(Player player, Coords c)
+        public Cell Shoot(Player player, Coords c)
         {
-            if (Current == player)
+            if (Current.Id == player.Id)
                 throw new Exception("ITS NOT YOUR TURN ALLO, ARE YOU CRAZY???????");
 
-            var result = GameBoards.Where(b => b.Player != player)
+            var result = GameBoards.Where(b => b.Player.Id != player.Id)
                 .FirstOrDefault()
                 .Shoot(c);
 
-            Current = GameBoards.FirstOrDefault(b => b.Player != Current).Player;
+            Current = GameBoards.FirstOrDefault(b => b.Player.Id != Current.Id).Player;
 
             GameHistory.Add(new StepHistory(player, this, result));
-            if (IsGameEnded(player))
-            {
-                Console.WriteLine("GAME IS ENDED");
-            }
-
+            return result;
         }
 
-        private bool IsGameEnded(Player p)
+        public bool IsGameEnded(Player p)
         {
-            var ships = GameBoards.Where(b => b.Player != p)
+            var ships = GameBoards.Where(b => b.Player.Id != p.Id)
                 .FirstOrDefault()
                 .Ships;
 
@@ -74,20 +70,29 @@ namespace CoreBattle.Domain.Core.GameDomain
             return true;
         }
 
-        public bool IsValidToStart(GameBoard board)
+        public bool IsValidToStart()
         {
-            Dictionary<int, int> table = new Dictionary<int, int>
-            {
-                { 1, 0 },
-                { 2, 0 },
-                { 3, 0 },
-                { 4, 0 }
-            };
-            foreach (var item in board.Ships)
-                table[item.Length]++;
+            //var table = new Dictionary<int, int>
+            //{
+            //    { 1, 0 },
+            //    { 2, 0 },
+            //    { 3, 0 },
+            //    { 4, 0 }
+            //};
+            //foreach (var board in GameBoards)
+            //{
+            //    foreach (var item in board.Ships)
+            //        table[item.Length]++;
+            //}
+            //var flag = true;
+            //if (!(table[1] == 4 && table[2] == 3 && table[3] == 2 && table[4] == 1))
+            //    flag = false;
 
-            if (table[1] == 4 && table[2] == 3 && table[3] == 2 && table[4] == 1)
+            //return false;
+            if (GameBoards.Count == 2 && GameBoards[0].IsReady & GameBoards[1].IsReady)
+            {
                 return true;
+            }
 
             return false;
         }

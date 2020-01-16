@@ -19,7 +19,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreBattle.Infrastructure.D
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreBattle.Infrastructure.Business", "Infrastructure\CoreBattle.Infrastructure.Business\CoreBattle.Infrastructure.Business.csproj", "{CCA2F961-CDDD-4432-9BF9-2F341DCE997E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CoreBattle", "CoreBattle\CoreBattle.csproj", "{3FC8DE39-1C0C-4E56-8220-20CF8D971CF9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreBattle", "CoreBattle\CoreBattle.csproj", "{3FC8DE39-1C0C-4E56-8220-20CF8D971CF9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

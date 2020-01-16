@@ -16,8 +16,10 @@ namespace CoreBattle.Domain.Core.GameDomain
         public List<Row> Field { get; set; }
         public List<Ship> Ships { get; set; }
         public Player Player { get; set; }
+        public bool IsReady { get; set; }
         public GameBoard(Player player, int length)
         {
+            IsReady = false;
             Player = player;
             Length = length;
             Field = new List<Row>();
@@ -87,7 +89,7 @@ namespace CoreBattle.Domain.Core.GameDomain
 
             return null;
         }
-        public void PlaceShip(Coords c1, Coords c2)
+        public List<Coords> PlaceShip(Coords c1, Coords c2)
         {
             if (!IsCoordsValid(c1, c2))
                 throw new Exception("Coords not valid");
@@ -142,6 +144,7 @@ namespace CoreBattle.Domain.Core.GameDomain
                     break;
             }
             Ships.Add(new Ship(coords.Count, coords));
+            return coords;
         }
 
         private bool IsCanPlaceShip(int len)

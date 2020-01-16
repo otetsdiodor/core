@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -18,12 +19,14 @@ namespace CoreBattle.Controllers
         Repository<Game> _gameRepository;
         Repository<Player> _playerRepository;
         private readonly UserManager<User> _userManager;
+        private IMemoryCache _cache;
 
-        public GameslistController(Repository<Game> repository, UserManager<User> userManager, Repository<Player> playerRepository)
+        public GameslistController(Repository<Game> repository, UserManager<User> userManager, Repository<Player> playerRepository, IMemoryCache cache)
         {
             _gameRepository = repository;
             _userManager = userManager;
             _playerRepository = playerRepository;
+            _cache = cache;
         }
 
         [HttpGet]
@@ -42,25 +45,18 @@ namespace CoreBattle.Controllers
             var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
 
             if (player == null)
+            {
                 player = new Player(user);
+                _playerRepository.Insert(player);
+            }
 
             var g = new Game(10, player);
-            var player2 = new Player(user);
-            g.AddBoard(player2);
-            g.GameBoards[0].PlaceShip(new Coords(0, 0), new Coords(0, 3));
-            g.GameBoards[1].PlaceShip(new Coords(0, 0), new Coords(0, 3));
-            //g.GameBoards[0].Shoot(new Coords(1, 0));
-            g.Shoot(player2, new Coords(0, 0));
-            g.Shoot(player2, new Coords(0, 9));
-            g.Shoot(player, new Coords(0, 1));
-            g.Shoot(player2, new Coords(0, 2));
-            g.Shoot(player, new Coords(0, 3));
-            g.Shoot(player2, new Coords(0, 1));
-            g.Shoot(player, new Coords(0, 5));
-            g.Shoot(player2, new Coords(0, 3));
-            //g.GameBoards[0].PlaceShip(new Coords(2, 0), new Coords(2, 2));
+            _cache.Set(g.Id.ToString(), g,new MemoryCacheEntryOptions { 
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
             _gameRepository.Insert(g);
-            return RedirectToAction("Index","Gameslist");
+            TempData["gameId"] = g.Id; 
+            return RedirectToAction("Index","Games");
         }
 
         [HttpPost]
@@ -69,13 +65,23 @@ namespace CoreBattle.Controllers
             var user = await _userManager.GetUserAsync(User);
             var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
 
-            var game = _gameRepository.GetAll().Include(g => g.GameBoards).Where(g => g.Id == Guid.Parse(gameId)).FirstOrDefault(); ;
-
+            //var game = _gameRepository.GetAll().Include(g => g.GameBoards).Where(g => g.Id == Guid.Parse(gameId)).FirstOrDefault(); ;
+            _cache.TryGetValue(gameId, out Game game);
             if (player == null)
+            {
                 player = new Player(user);
+                _playerRepository.Insert(player);
+            }
 
             game.AddBoard(player);
-            return RedirectToAction("Index", "Gameslist");
+            game.Status = GameStatus.GoesOn;
+            _cache.Remove(gameId);
+            _cache.Set(game.Id.ToString(), game, new MemoryCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+            });
+            TempData["gameId"] = game.Id;
+            return RedirectToAction("Index", "Games");
         }
     }
 }

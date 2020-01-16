@@ -43,6 +43,7 @@ namespace CoreBattle.Infrastructure.Data
             {
                 throw new ArgumentNullException("entity");
             }
+            context.Update(entity);
             context.SaveChanges();
         }
 

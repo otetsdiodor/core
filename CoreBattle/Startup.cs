@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using CoreBattle.Controllers;
 using CoreBattle.Domain.Core.GameDomain;
 using CoreBattle.Domain.Core.ManageDomain;
 using CoreBattle.Infrastructure.Data;
@@ -38,6 +39,8 @@ namespace CoreBattle
 
             services.AddTransient<Repository<Game>>();
             services.AddTransient<Repository<Player>>();
+            services.AddSignalR();
+            services.AddMemoryCache();
 
             services.AddControllersWithViews();
         }
@@ -59,6 +62,7 @@ namespace CoreBattle
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHub<GameHub>("/game");
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
