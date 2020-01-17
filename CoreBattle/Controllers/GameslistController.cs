@@ -17,13 +17,15 @@ namespace CoreBattle.Controllers
     public class GameslistController : Controller
     {
         Repository<Game> _gameRepository;
+        Repository<GameBoard> _gBRepository;
         Repository<Player> _playerRepository;
         private readonly UserManager<User> _userManager;
         private IMemoryCache _cache;
 
-        public GameslistController(Repository<Game> repository, UserManager<User> userManager, Repository<Player> playerRepository, IMemoryCache cache)
+        public GameslistController(Repository<Game> repository, UserManager<User> userManager, Repository<Player> playerRepository, IMemoryCache cache, Repository<GameBoard> gBRepository)
         {
             _gameRepository = repository;
+            _gBRepository = gBRepository;
             _userManager = userManager;
             _playerRepository = playerRepository;
             _cache = cache;
@@ -74,6 +76,20 @@ namespace CoreBattle.Controllers
 
             game.AddBoard(player);
             game.Status = GameStatus.GoesOn;
+
+            try
+            {
+                _gBRepository.Update(game.GameBoards[1]);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e. Message);
+            }
+            
+            
+            var tmp = _gameRepository.Get(game.Id);
+
+
             _cache.Remove(gameId);
             _cache.Set(game.Id.ToString(), game, new MemoryCacheEntryOptions
             {
