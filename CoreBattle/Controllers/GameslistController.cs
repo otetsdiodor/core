@@ -54,6 +54,25 @@ namespace CoreBattle.Controllers
             _cache.Set(g.Id.ToString(), g,new MemoryCacheEntryOptions { 
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
             });
+
+
+
+            //g.AddBoard(player);
+            //g.GameHistory.Add(new StepHistory(player,g,new Cell(1,1)));
+            //g.GameHistory.Add(new StepHistory(player,g,new Cell(2,1)));
+            //g.GameHistory.Add(new StepHistory(player,g,new Cell(3,1)));
+            //g.GameHistory.Add(new StepHistory(player,g,new Cell(4,1)));
+
+            //g.GameBoards[0].Ships.Add(new Ship(3, new List<Coords>() { new Coords(2, 2), new Coords(2, 3) }));
+            //g.GameBoards[0].Ships.Add(new Ship(2, new List<Coords>() { new Coords(3, 2), new Coords(3, 3) }));
+            //g.GameBoards[0].Ships.Add(new Ship(4, new List<Coords>() { new Coords(4, 2), new Coords(4, 3) }));
+
+
+            //g.GameBoards[1].Ships.Add(new Ship(3, new List<Coords>() { new Coords(2, 2), new Coords(2, 3) }));
+            //g.GameBoards[1].Ships.Add(new Ship(2, new List<Coords>() { new Coords(3, 2), new Coords(3, 3) }));
+            //g.GameBoards[1].Ships.Add(new Ship(4, new List<Coords>() { new Coords(4, 2), new Coords(4, 3) }));
+
+
             _gameRepository.Insert(g);
             TempData["gameId"] = g.Id; 
             return RedirectToAction("Index","Games");

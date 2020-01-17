@@ -59,15 +59,16 @@ namespace CoreBattle.Controllers
         {
             _cache.TryGetValue(gameId, out Game game);
             var user = await _userManager.GetUserAsync(Context.User);
-            var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
+            var player = game.GameBoards.FirstOrDefault(p => p.Player.User.Id == user.Id).Player;
+            //var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
             var userId = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Player.User.Id;
             try
             {
                 game.Shoot(player,new Coords(int.Parse(x),int.Parse(y)));
                 var my = game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id).Field;
                 var enemy = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Field;
-                await Clients.User(user.Id).SendAsync("ShootResult", my,enemy);
-                await Clients.User(userId).SendAsync("ShootResult", enemy,my);
+                await Clients.User(user.Id).SendAsync("ShootResult", my, enemy);
+                await Clients.User(userId).SendAsync("ShootResult", enemy, my);
                 if (game.IsGameEnded(player))
                 {
                     await Clients.User(user.Id).SendAsync("EndGame", "WIN");
@@ -94,10 +95,7 @@ namespace CoreBattle.Controllers
                 game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id).IsReady = true;
                 if (game.IsValidToStart())
                 {
-                    //var my = game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id).Field;
-                    //var enemy = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Field;
-                    await Clients.Users(user.Id,userId.ToString()).SendAsync("START_GAME"/*, my, enemy*/);
-                    //await Clients.User(userId.ToString()).SendAsync("START_GAME"/*, enemy, my*/);
+                    await Clients.Users(user.Id,userId.ToString()).SendAsync("START_GAME");
                 }
             }
             catch (Exception e)

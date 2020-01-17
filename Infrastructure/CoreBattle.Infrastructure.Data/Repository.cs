@@ -43,6 +43,8 @@ namespace CoreBattle.Infrastructure.Data
             {
                 throw new ArgumentNullException("entity");
             }
+            //context.Set<T>().Attach(entity);
+            //context.Entry(entity).State = EntityState.Modified;
             context.Update(entity);
             context.SaveChanges();
         }
