@@ -39,6 +39,7 @@ namespace CoreBattle
 
             services.AddTransient<Repository<Game>>();
             services.AddTransient<Repository<Player>>();
+            services.AddTransient<Repository<GameBoard>>();
             services.AddSignalR();
             services.AddMemoryCache();
 
