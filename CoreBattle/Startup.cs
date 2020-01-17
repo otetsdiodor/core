@@ -28,8 +28,8 @@ namespace CoreBattle
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<Infrastructure.Data.AppContext>(options =>
-                options.UseSqlServer(Configuration.GetConnectionString("EntityConnection")));
+            //services.AddDbContext<Infrastructure.Data.AppContext>(options =>
+            //   options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 

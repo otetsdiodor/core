@@ -8,10 +8,9 @@ namespace CoreBattle.Infrastructure.Data
 {
     public class AppContext : DbContext
     {
-        DbSet<Game> Games { get; set; }
+        public DbSet<Game> Games { get; set; }
         public AppContext(DbContextOptions<AppContext> options) : base(options)
         {
-            //Database.EnsureDeleted();
             Database.EnsureCreated();
         }
     }

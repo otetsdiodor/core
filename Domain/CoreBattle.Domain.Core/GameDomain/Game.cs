@@ -11,14 +11,16 @@ namespace CoreBattle.Domain.Core.GameDomain
         GoesOn,
         Completed,
     }
+
     public class Game : Entity
     {
         private const int maxPlayerCount = 2;
+        private Player Current;
+
         public int BoardLength { get; set; }
         public List<GameBoard> GameBoards { get; set; }
         public List<StepHistory> GameHistory { get; set; }
         public GameStatus Status { get; set; }
-        private Player Current;
 
         public Game()
         { }

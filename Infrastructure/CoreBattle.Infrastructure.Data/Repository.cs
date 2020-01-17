@@ -10,10 +10,10 @@ namespace CoreBattle.Infrastructure.Data
 {
     public class Repository<T> : IRepository<T> where T : Entity
     {
-        private readonly AppContext context;
+        private readonly ApplicationContext context;
         private DbSet<T> entities;
 
-        public Repository(AppContext context)
+        public Repository(ApplicationContext context)
         {
             this.context = context;
             entities = context.Set<T>();
@@ -43,8 +43,6 @@ namespace CoreBattle.Infrastructure.Data
             {
                 throw new ArgumentNullException("entity");
             }
-            //context.Set<T>().Attach(entity);
-            //context.Entry(entity).State = EntityState.Modified;
             context.Update(entity);
             context.SaveChanges();
         }

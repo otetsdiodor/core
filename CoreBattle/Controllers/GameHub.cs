@@ -52,7 +52,7 @@ namespace CoreBattle.Controllers
                 await Clients.User(user.Id).SendAsync("ErrorHandler", e.Message);
             }
             _cache.Remove(game.Id);
-            _cache.Set(game.Id, game);
+            _cache.Set(game.Id.ToString(), game);
         }
 
         public async Task Shoot(string gameId, string x,string y)

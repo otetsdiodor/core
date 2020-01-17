@@ -13,9 +13,8 @@ namespace CoreBattle.Domain.Core.GameDomain
         {
             User = user;
         }
-        public Player()
-        {
 
-        }
+        public Player()
+        {}
     }
 }

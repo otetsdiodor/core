@@ -13,10 +13,11 @@ namespace CoreBattle.Domain.Core.GameDomain
     public class GameBoard : Entity
     {
         public int Length { get; set; }
+        public bool IsReady { get; set; }
         public List<Row> Field { get; set; }
         public List<Ship> Ships { get; set; }
         public Player Player { get; set; }
-        public bool IsReady { get; set; }
+        public Game Game { get; set; }
         public GameBoard(Player player, int length)
         {
             IsReady = false;

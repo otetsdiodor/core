@@ -11,9 +11,6 @@ namespace CoreBattle.Domain.Core.GameDomain
         Ship,
         DamagedShip
     }
-    public enum CellDSC { 
-        BlockedForPlacing
-    }
 
     public class Cell : Entity
     {
@@ -21,6 +18,7 @@ namespace CoreBattle.Domain.Core.GameDomain
         public int Y { get; set; }
         public CellState State { get; set; }
         public bool BlockedForPlacing { get; set; }
+        public Row Row { get; set; }
         public Cell(int x, int y)
         {
             X = x;
