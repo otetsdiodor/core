@@ -41,6 +41,7 @@
 
                 const hubConnection = new signalR.HubConnectionBuilder()
                     .withUrl("/game")
+                    .withAutomaticReconnect()
                     .build();
 
                 hubConnection.on("Send", function (data) {
@@ -51,7 +52,8 @@
                     document.getElementById("chatroom").insertBefore(elem, firstElem);
                 });
                 hubConnection.on("PlaceShipResult", function (data, d2) {
-
+                    console.log(d2);
+                    console.log(data);
                     let elem = document.createElement("p");
                     elem.appendChild(document.createTextNode(data));
                     let firstElem = document.getElementById("chatroom").firstChild;
@@ -60,12 +62,10 @@
                 });
 
                 function FillField(Fname, data) {
-                    data.forEach(function (item) {
-                        item.cellsRow.forEach(function (d) {
-                            if (d.state == 2) {
-                                $(Fname).find($(`.battle-area-cell[pos-x="${d.y}"][pos-y="${d.x}"]`)).addClass('dead');
-                            }
-                        });
+                    data.forEach(function (d) {
+                        if (d.state == 2) {
+                            $(Fname).find($(`.battle-area-cell[pos-x="${d.y}"][pos-y="${d.x}"]`)).addClass('dead');
+                        }
                     });
                 }
                 hubConnection.on("ErrorHandler", function (data) {
@@ -75,10 +75,19 @@
                     document.getElementById("chatroom").insertBefore(elem, firstElem);
                 });
 
+                hubConnection.on("Your_Turn", function (data) {
+                    alert('YOUR TURN');
+                });
+
                 hubConnection.on("ReadyResult", function (data) {
                     console.log(data);
                     if (data == 'OK') {
+                        let elem = document.createElement("p");
+                        elem.appendChild(document.createTextNode('PLAYER READY'));
+                        let firstElem = document.getElementById("chatroom").firstChild;
+                        document.getElementById("chatroom").insertBefore(elem, firstElem);
                         $('.player-field').find($('.battle-area-cell')).unbind('click');
+                        $('#readyBtn').remove();
                     }
                 });
 
@@ -89,6 +98,7 @@
                 });
 
                 hubConnection.on("EndGame", function (data) {
+                    $('.enemy-field').find($('.battle-area-cell')).unbind('click');
                     if (data == 'WIN') {
                         alert('YOU WIN');
                     }
@@ -104,16 +114,16 @@
                 });
 
                 function FillShooted(Fname,data) {
-                    data.forEach(function (item) {
-                        item.cellsRow.forEach(function (d) {
+                    data.forEach(function (d) {
+                            let cell = $(Fname).find($(`.battle-area-cell[pos-x="${d.y}"][pos-y="${d.x}"]`));
                             if (d.state == 1) {
-                                $(Fname).find($(`.battle-area-cell[pos-x="${d.y}"][pos-y="${d.x}"]`)).addClass('miss');
+                                cell.addClass('miss');
                             }
                             if (d.state == 3) {
-                                $(Fname).find($(`.battle-area-cell[pos-x="${d.y}"][pos-y="${d.x}"]`)).addClass('injured');
+                                cell.removeClass('dead');
+                                cell.addClass('injured');
                             }
                         });
-                    });
                 }
 
                 $('#readyBtn').click(function () {
@@ -140,7 +150,9 @@
                     hubConnection.invoke("Shoot", gameId, yPos, xPos);
                 }
 
-                hubConnection.start();
+                hubConnection.start().catch(function (err) {
+                    return console.error(err.toString());
+                });
             });
     </script>
 </body>

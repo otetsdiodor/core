@@ -4,7 +4,7 @@ using System.Text;
 
 namespace CoreBattle.Domain.Core.GameDomain
 {
-    public class ShipInfo
+    public class ShipInfo : Entity
     {
         public int Length { get; set; }
         public int CountLivePart { get; set; }
@@ -12,6 +12,11 @@ namespace CoreBattle.Domain.Core.GameDomain
         public ShipInfo()
         {
 
+        }
+        public ShipInfo(int len, int count)
+        {
+            Length = len;
+            CountLivePart = count;
         }
     }
 }

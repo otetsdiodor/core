@@ -11,6 +11,7 @@ namespace CoreBattle.Infrastructure.Data
     public class ApplicationContext : IdentityDbContext<User>
     {
         public DbSet<Game> Games { get; set; }
+        public DbSet<ResultStats> Statistics { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {

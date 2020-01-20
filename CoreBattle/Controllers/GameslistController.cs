@@ -66,7 +66,6 @@ namespace CoreBattle.Controllers
         {
             var user = _userManager.GetUserAsync(User).Result;
             var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
-            //var game = _gameRepository.Get(Guid.Parse(gameId));
 
             _cache.TryGetValue(gameId, out Game game);
             if (player == null)
@@ -76,19 +75,22 @@ namespace CoreBattle.Controllers
             }
 
             game.AddBoard(player);
+            
             game.Status = GameStatus.GoesOn;
 
             try
             {
-                //game.GameBoards[1].
-                //_gBRepository.Insert(game.GameBoards[1]);
-                _gameRepository.Update(game);
+                game.GameBoards[1].GameId = game.Id;
+                _gBRepository.Insert(game.GameBoards[1]);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e. Message);
             }
-            
+
+            var g = _gameRepository.Get(Guid.Parse(gameId));
+            g.Status = GameStatus.GoesOn;
+            _gameRepository.Update(g);
 
             _cache.Remove(gameId);
             _cache.Set(game.Id.ToString(), game, new MemoryCacheEntryOptions

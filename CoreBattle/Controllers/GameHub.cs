@@ -17,11 +17,29 @@ namespace CoreBattle.Controllers
         private IMemoryCache _cache;
         private UserManager<User> _userManager;
         private Repository<Player> _playerRepository;
+        private Repository<ResultStats> _statRepository;
         private Repository<Game> _gameRepository;
+        private Repository<Cell> _cellRepository;
+        private Repository<Ship> _shipRepository;
+        private Repository<StepHistory> _stepRepository;
+        Repository<GameBoard> _gBRepository;
 
-        public GameHub(IMemoryCache cache, UserManager<User> userManager, Repository<Player> playerRepository, Repository<Game> gameRepository)
+        public GameHub(IMemoryCache cache,
+            Repository<ResultStats> statRepository,
+            UserManager<User> userManager,
+            Repository<Player> playerRepository,
+            Repository<Game> gameRepository,
+            Repository<GameBoard> gBRepository,
+            Repository<Cell> cellRepository,
+            Repository<StepHistory> stepRepository,
+            Repository<Ship> shipRepository)
         {
+            _statRepository = statRepository;
+            _stepRepository = stepRepository;
+            _shipRepository = shipRepository;
+            _cellRepository = cellRepository;
             _gameRepository = gameRepository;
+            _gBRepository = gBRepository;
             _cache = cache;
             _userManager = userManager;
             _playerRepository = playerRepository;
@@ -36,49 +54,81 @@ namespace CoreBattle.Controllers
 
         public async Task PlaceShip(string gameId, string x1, string y1, string x2, string y2)
         {
-            _cache.TryGetValue(gameId,out Game game);
-            var user = await _userManager.GetUserAsync(Context.User);
-            var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
-            //var userId = game.GameBoards.FirstOrDefault(b => b.Player != player).Player.Id;
-
             try
             {
-                var result = game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id);
-                result.PlaceShip(new Coords(int.Parse(x1), int.Parse(y1)), new Coords(int.Parse(x2), int.Parse(y2)));
-                await Clients.User(user.Id.ToString()).SendAsync("PlaceShipResult", "Placed",result.Field);
-            }
-            catch (Exception e)
-            {
-                await Clients.User(user.Id).SendAsync("ErrorHandler", e.Message);
-            }
-            _cache.Remove(game.Id);
-            _cache.Set(game.Id.ToString(), game);
-        }
+                _cache.TryGetValue(gameId, out Game game);
+                var userId = Context.UserIdentifier;
+                var player = game.GameBoards.FirstOrDefault(p => p.Player.User.Id == userId).Player;
 
+                try
+                {
+                    var result = game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id);
+                    var ship = result.PlaceShip(new Coords(int.Parse(x1), int.Parse(y1)), new Coords(int.Parse(x2), int.Parse(y2)));
+                    _shipRepository.Insert(ship);
+                    foreach (var item in result.Field)
+                    {
+                        foreach (var cell in item.CellsRow)
+                        {
+                            _cellRepository.Update(cell);
+                        }
+                    }
+                    var responseField = ConvertField(result.Field);
+                    await Clients.User(userId).SendAsync("PlaceShipResult", "Placed", responseField);
+                }
+                catch (Exception e)
+                {
+                    await Clients.User(userId).SendAsync("ErrorHandler", e.Message);
+                }
+                _cache.Remove(game.Id);
+                _cache.Set(game.Id.ToString(), game);
+            }
+            catch (Exception ee)
+            {
+                Console.WriteLine("LOSER");
+            }
+        }
+        private List<object> ConvertField(List<Row> field)
+        {
+            var result = new List<object>();
+            foreach (var item in field)
+            {
+                foreach (var cell in item.CellsRow)
+                {
+                    result.Add(new { X = cell.X, Y = cell.Y, State = cell.State });
+                }
+            }
+            return result;
+        }
         public async Task Shoot(string gameId, string x,string y)
         {
             _cache.TryGetValue(gameId, out Game game);
-            var user = await _userManager.GetUserAsync(Context.User);
-            var player = game.GameBoards.FirstOrDefault(p => p.Player.User.Id == user.Id).Player;
-            //var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
+            var CurrId = Context.UserIdentifier;
+            var player = game.GameBoards.FirstOrDefault(p => p.Player.User.Id == CurrId).Player;
             var userId = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Player.User.Id;
             try
             {
-                game.Shoot(player,new Coords(int.Parse(x),int.Parse(y)));
-                var my = game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id).Field;
-                var enemy = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Field;
-                await Clients.User(user.Id).SendAsync("ShootResult", my, enemy);
+                var ShootedCell = game.Shoot(player,new Coords(int.Parse(x),int.Parse(y)));
+                ShootedCell.Row = null;
+                _cellRepository.Update(ShootedCell);
+                _stepRepository.Insert(game.GameHistory.Last());
+                var my = ConvertField(game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id).Field);
+                var enemy = ConvertField(game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Field);
+                await Clients.User(CurrId).SendAsync("ShootResult", my, enemy);
                 await Clients.User(userId).SendAsync("ShootResult", enemy, my);
                 if (game.IsGameEnded(player))
                 {
-                    await Clients.User(user.Id).SendAsync("EndGame", "WIN");
+                    var g = _gameRepository.Get(Guid.Parse(gameId));
+                    g.Status = GameStatus.Completed;
+                    _gameRepository.Update(g);
+                    var stat = new ResultStats(player, game);
+                    _statRepository.Insert(stat);
+                    await Clients.User(CurrId).SendAsync("EndGame", "WIN");
                     await Clients.User(userId).SendAsync("EndGame", "LOSE");
-                    _gameRepository.Update(game);
                 }
             }
             catch (Exception e)
             {
-                await Clients.User(user.Id).SendAsync("ErrorHandler", e.Message);
+                await Clients.User(CurrId).SendAsync("ErrorHandler", e.Message);
             }
             _cache.Remove(game.Id);
             _cache.Set(game.Id.ToString(), game);
@@ -87,26 +137,30 @@ namespace CoreBattle.Controllers
         public async Task Ready(string gameId)
         {
             _cache.TryGetValue(gameId, out Game game);
-            var user = await _userManager.GetUserAsync(Context.User);
-            var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
-            var userId = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Player.User.Id;
+            var CurrId = Context.UserIdentifier;
+            var player = game.GameBoards.FirstOrDefault(p => p.Player.User.Id == CurrId).Player;
             try
             {
-                game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id).IsReady = true;
+                var board = game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id);
+                board.IsReady = true;
+                _gBRepository.Update(board);
                 if (game.IsValidToStart())
                 {
-                    await Clients.Users(user.Id,userId.ToString()).SendAsync("START_GAME");
+                    var userId = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Player.User.Id;
+                    var startId = game.Current.User.Id;
+                    await Clients.User(startId).SendAsync("Your_Turn");
+                    await Clients.Users(CurrId, userId).SendAsync("START_GAME");
                 }
             }
             catch (Exception e)
             {
-                await Clients.User(user.Id).SendAsync("ErrorHandler", e.Message);
+                await Clients.User(CurrId).SendAsync("ErrorHandler", e.Message);
             }
             
             _cache.Remove(game.Id);
             _cache.Set(game.Id.ToString(), game);
 
-            await Clients.User(user.Id).SendAsync("ReadyResult", "OK");
+            await Clients.User(CurrId).SendAsync("ReadyResult", "OK");
         }
     }
 }

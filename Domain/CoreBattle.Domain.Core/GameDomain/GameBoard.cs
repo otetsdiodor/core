@@ -16,8 +16,10 @@ namespace CoreBattle.Domain.Core.GameDomain
         public bool IsReady { get; set; }
         public List<Row> Field { get; set; }
         public List<Ship> Ships { get; set; }
+        public Guid PlayerId { get; set; }
         public Player Player { get; set; }
         public Game Game { get; set; }
+        public Guid GameId { get; set; }
         public GameBoard(Player player, int length)
         {
             IsReady = false;
@@ -90,7 +92,7 @@ namespace CoreBattle.Domain.Core.GameDomain
 
             return null;
         }
-        public List<Coords> PlaceShip(Coords c1, Coords c2)
+        public Ship PlaceShip(Coords c1, Coords c2)
         {
             if (!IsCoordsValid(c1, c2))
                 throw new Exception("Coords not valid");
@@ -98,7 +100,12 @@ namespace CoreBattle.Domain.Core.GameDomain
             int start ,end;
             var coords = new List<Coords>();
             var direction = GetDirection(c1, c2);
-
+            if (c1.X> c2.X || c1.Y > c2.Y)
+            {
+                var tmp = c1;
+                c1 = c2;
+                c2 = tmp;
+            }
             switch (direction)
             {
                 case Direction.Horizontal:
@@ -144,8 +151,8 @@ namespace CoreBattle.Domain.Core.GameDomain
                     }
                     break;
             }
-            Ships.Add(new Ship(coords.Count, coords));
-            return coords;
+            Ships.Add(new Ship(coords.Count, coords,this));
+            return Ships.LastOrDefault();
         }
 
         private bool IsCanPlaceShip(int len)

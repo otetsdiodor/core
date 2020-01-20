@@ -15,7 +15,7 @@ namespace CoreBattle.Domain.Core.GameDomain
     public class Game : Entity
     {
         private const int maxPlayerCount = 2;
-        private Player Current;
+        public Player Current { get; private set; }
 
         public int BoardLength { get; set; }
         public List<GameBoard> GameBoards { get; set; }
@@ -45,14 +45,14 @@ namespace CoreBattle.Domain.Core.GameDomain
 
         public Cell Shoot(Player player, Coords c)
         {
-            if (Current.Id == player.Id)
+            if (Current.Id != player.Id)
                 throw new Exception("ITS NOT YOUR TURN ALLO, ARE YOU CRAZY???????");
 
             var result = GameBoards.Where(b => b.Player.Id != player.Id)
                 .FirstOrDefault()
                 .Shoot(c);
-
-            Current = GameBoards.FirstOrDefault(b => b.Player.Id != Current.Id).Player;
+            if (result.State != CellState.DamagedShip)
+                Current = GameBoards.FirstOrDefault(b => b.Player.Id != Current.Id).Player;
 
             GameHistory.Add(new StepHistory(player, this, result));
             return result;

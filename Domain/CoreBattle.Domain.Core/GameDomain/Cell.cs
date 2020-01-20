@@ -18,6 +18,7 @@ namespace CoreBattle.Domain.Core.GameDomain
         public int Y { get; set; }
         public CellState State { get; set; }
         public bool BlockedForPlacing { get; set; }
+        public Guid RowId { get; set; }
         public Row Row { get; set; }
         public Cell(int x, int y)
         {

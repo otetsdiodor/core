@@ -7,6 +7,7 @@ namespace CoreBattle.Domain.Core.GameDomain
     public class Row : Entity
     {
         public List<Cell> CellsRow { get; set; }
+        public Guid GameBoardId { get; set; }
         public GameBoard GameBoard { get; set; }
         public Row(int length)
         {

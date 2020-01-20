@@ -6,7 +6,6 @@ using System.Text;
 
 namespace CoreBattle.Domain.Core.ManageDomain
 {
-    [Table("Users")]
     public class User : IdentityUser
     {
         public string NickName { get; set; }
