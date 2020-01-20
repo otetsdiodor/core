@@ -41,9 +41,9 @@ namespace CoreBattle.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateGame()
+        public IActionResult CreateGame()
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = _userManager.GetUserAsync(User).Result;
             var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
 
             if (player == null)
@@ -62,10 +62,11 @@ namespace CoreBattle.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> ConnectToGame(string gameId)
+        public IActionResult ConnectToGame(string gameId)
         {
-            var user = await _userManager.GetUserAsync(User);
+            var user = _userManager.GetUserAsync(User).Result;
             var player = _playerRepository.GetAll().Include(p => p.User).Where(p => p.User.Id == user.Id).FirstOrDefault();
+            //var game = _gameRepository.Get(Guid.Parse(gameId));
 
             _cache.TryGetValue(gameId, out Game game);
             if (player == null)
@@ -79,16 +80,15 @@ namespace CoreBattle.Controllers
 
             try
             {
-                _gBRepository.Update(game.GameBoards[1]);
+                //game.GameBoards[1].
+                //_gBRepository.Insert(game.GameBoards[1]);
+                _gameRepository.Update(game);
             }
             catch (Exception e)
             {
                 Console.WriteLine(e. Message);
             }
             
-            
-            var tmp = _gameRepository.Get(game.Id);
-
 
             _cache.Remove(gameId);
             _cache.Set(game.Id.ToString(), game, new MemoryCacheEntryOptions
