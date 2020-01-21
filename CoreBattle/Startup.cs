@@ -30,6 +30,8 @@ namespace CoreBattle
         {
             //services.AddDbContext<Infrastructure.Data.AppContext>(options =>
             //   options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+            services.AddRazorPages()
+                .AddRazorRuntimeCompilation();
             services.AddDbContext<ApplicationContext>(options =>
                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 

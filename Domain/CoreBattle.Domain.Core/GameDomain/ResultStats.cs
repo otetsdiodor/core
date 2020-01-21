@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 
@@ -7,10 +9,10 @@ namespace CoreBattle.Domain.Core.GameDomain
 {
     public class ResultStats : Entity
     {
-        //public Guid PlayerId { get; set; }
         public string WinnerName { get; set; }
         public int CountOfSteps { get; set; }
         public List<ShipInfo> ShipsInfo { get; set; }
+        [Column(TypeName = "date")]
         public DateTime EndTime { get; set; }
         public ResultStats()
         {

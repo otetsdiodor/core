@@ -1,0 +1,136 @@
+﻿@{
+    ViewBag.Title = "Cтатистика игр";
+}
+
+<h2>Статистика игр</h2>
+
+<form method="get" name="statForm">
+    <div class="form-inline form-group">
+        <label class="control-label">Ник: </label>
+        <input name="nickname" class="form-control" />
+
+        <label class="control-label">Кол-во кораблей: </label>
+        <input name="countofships" class="form-control" />
+
+        <label class="control-label">Кол-во шагов: </label>
+        <input name="countofsteps" class="form-control" />
+
+        <label class="control-label">Date: </label>
+        <input name="date" class="form-control" />
+
+        <input type="button" value="Фильтр" class="btn btn-dark" onclick="GetData()" />
+    </div>
+</form>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>
+                <a onclick="SortClick('name')">
+                    Имя
+                </a>
+            </th>
+            <th>
+                <a onclick="SortClick('ships')">
+                    Кол-во кораблей
+                </a>
+            </th>
+            <th>
+                <a onclick="SortClick('count')">
+                    Кол-во шагов
+                </a>
+            </th>
+            <th>
+                <a onclick="SortClick('date')">
+                    Дата
+                </a>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script>
+    let Status = -1;
+    $(document).ready(function () {
+        GetData();
+    });
+    function SortClick(type) {
+        console.log(Status);
+        console.log(type);
+        switch (type) {
+            case "name":
+                if (Status == 0) {
+                    Status = 1;
+                }
+                else {
+                    Status = 0;
+                }
+                break;
+            case "ships":
+                if (Status == 2) {
+                    Status = 3;
+                }
+                else {
+                    Status = 2;
+                }
+                break;
+            case "count":
+                if (Status == 4) {
+                    Status = 5;
+                }
+                else {
+                    Status = 4;
+                }
+                break;
+             case "date":
+                if (Status == 6) {
+                    Status = 7;
+                }
+                else {
+                    Status = 6;
+                }
+                break;
+        }
+        console.log(Status);
+        GetData();
+    }
+    function GetData() {
+        const form = document.forms["statForm"];
+        $.get("api/statistic", {
+            "Name": form.elements["nickname"].value,
+            "CountShips": form.elements["countofships"].value,
+            "countSteps": form.elements["countofsteps"].value,
+            "date": form.elements["date"].value,
+            "State":Status
+        }, function (data) {
+            console.log(data);
+            let rows = document.querySelector("tbody");
+            $("tbody").empty();
+            data.forEach(function (d) {
+                console.log(d);
+                rows.append(row(d));
+            });
+        });
+    }
+    function row(Stat) {
+        console.log(Stat);
+        let tr = document.createElement("tr");
+        let Nick = document.createElement("td");
+        Nick.append(Stat.winnerName);
+        tr.append(Nick);
+
+        let countShips = document.createElement("td");
+        countShips.append(Stat.shipsInfo.length);
+        tr.append(countShips);
+
+        let countSteps = document.createElement("td");
+        countSteps.append(Stat.countOfSteps);
+        tr.append(countSteps);
+
+        let time = document.createElement("td");
+        time.append(Stat.endTime.split('T')[0]);
+        tr.append(time);
+        return tr;
+    }
+</script>
