@@ -1,0 +1,44 @@
+body {
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+}
+
+.battle-area-table {
+    position: relative;
+    height: 400px;
+    width: 400px;
+    background-color: #5151ad;
+}
+
+.battle-area-cell {
+    float: left;
+    height: 40px;
+    width: 40px;
+    transition: all .3s ease;
+}
+
+    .battle-area-cell:hover {
+        background-color: #9b9b9b;
+        cursor: pointer;
+    }
+
+.injured {
+    background-color: #a58f05 !important;
+}
+
+.dead {
+    background-color: #a50000 !important;
+}
+
+.miss {
+    background-color: #0000003d;
+}
+
+.battle-area {
+    float: left;
+    height: 100%;
+    width: 50%;
+    transition: all .3s ease;
+}
