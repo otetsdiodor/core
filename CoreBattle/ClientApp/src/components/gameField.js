@@ -1,6 +1,5 @@
 ﻿import React, { Component } from 'react';
 import '../custom.css'
-//import * as signalR from "@microsoft/signalr";
 
 export function GameField( props ) {
     const gField = props.field.map(cell => {
