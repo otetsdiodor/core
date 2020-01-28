@@ -22,7 +22,7 @@ namespace CoreBattle.Controllers
         private Repository<Cell> _cellRepository;
         private Repository<Ship> _shipRepository;
         private Repository<StepHistory> _stepRepository;
-        Repository<GameBoard> _gBRepository;
+        private Repository<GameBoard> _gBRepository;
 
         public GameHub(IMemoryCache cache,
             Repository<ResultStats> statRepository,
@@ -45,15 +45,31 @@ namespace CoreBattle.Controllers
             _playerRepository = playerRepository;
         }
 
+        public async override Task OnConnectedAsync()
+        {
+            _cache.TryGetValue(Context.UserIdentifier, out string gameId);
+            _cache.TryGetValue(gameId, out Game game);
+            var player = game.GameBoards.FirstOrDefault(p => p.Player.User.Id == Context.UserIdentifier).Player;
+            var oponent = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id)?.Player?.User;
+            if (oponent != null)
+            {
+                await Clients.User(Context.UserIdentifier).SendAsync("MyName", player.User.NickName);
+                await Clients.User(Context.UserIdentifier).SendAsync("OponentName", oponent.NickName);
+                await Clients.User(oponent.Id).SendAsync("OponentName", player.User.NickName);
+            }
+            else
+                await Clients.User(Context.UserIdentifier).SendAsync("MyName", player.User.NickName);
+        }
+
         public async Task Send(string message)
         {
             var user = await _userManager.GetUserAsync(Context.User);
-            await Clients.All.SendAsync("Send", message);
-            await Clients.User(user.Id).SendAsync("Send", "Placed");
+            await Clients.All.SendAsync("ErrorHandler", message);
         }
 
-        public async Task PlaceShip(string gameId, string x1, string y1, string x2, string y2)
+        public async Task PlaceShip(int x1, int y1, int x2, int y2)
         {
+            _cache.TryGetValue(Context.UserIdentifier, out string gameId);
             try
             {
                 _cache.TryGetValue(gameId, out Game game);
@@ -63,7 +79,7 @@ namespace CoreBattle.Controllers
                 try
                 {
                     var result = game.GameBoards.FirstOrDefault(b => b.Player.Id == player.Id);
-                    var ship = result.PlaceShip(new Coords(int.Parse(x1), int.Parse(y1)), new Coords(int.Parse(x2), int.Parse(y2)));
+                    var ship = result.PlaceShip(new Coords(x1, y1), new Coords(x2, y2));
                     _shipRepository.Insert(ship);
                     foreach (var item in result.Field)
                     {
@@ -73,7 +89,7 @@ namespace CoreBattle.Controllers
                         }
                     }
                     var responseField = ConvertField(result.Field);
-                    await Clients.User(userId).SendAsync("PlaceShipResult", "Placed", responseField);
+                    await Clients.User(userId).SendAsync("PlaceShipResult", responseField);
                 }
                 catch (Exception e)
                 {
@@ -99,15 +115,16 @@ namespace CoreBattle.Controllers
             }
             return result;
         }
-        public async Task Shoot(string gameId, string x,string y)
+        public async Task Shoot(int x,int y)
         {
+            _cache.TryGetValue(Context.UserIdentifier, out string gameId);
             _cache.TryGetValue(gameId, out Game game);
             var CurrId = Context.UserIdentifier;
             var player = game.GameBoards.FirstOrDefault(p => p.Player.User.Id == CurrId).Player;
             var userId = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Player.User.Id;
             try
             {
-                var ShootedCell = game.Shoot(player,new Coords(int.Parse(x),int.Parse(y)));
+                var ShootedCell = game.Shoot(player,new Coords(x,y));
                 ShootedCell.Row = null;
                 _cellRepository.Update(ShootedCell);
                 _stepRepository.Insert(game.GameHistory.Last());
@@ -134,8 +151,9 @@ namespace CoreBattle.Controllers
             _cache.Set(game.Id.ToString(), game);
         }
 
-        public async Task Ready(string gameId)
+        public async Task Ready()
         {
+            _cache.TryGetValue(Context.UserIdentifier, out string gameId);
             _cache.TryGetValue(gameId, out Game game);
             var CurrId = Context.UserIdentifier;
             var player = game.GameBoards.FirstOrDefault(p => p.Player.User.Id == CurrId).Player;
@@ -148,7 +166,7 @@ namespace CoreBattle.Controllers
                 {
                     var userId = game.GameBoards.FirstOrDefault(b => b.Player.Id != player.Id).Player.User.Id;
                     var startId = game.Current.User.Id;
-                    await Clients.User(startId).SendAsync("Your_Turn");
+                    await Clients.User(startId).SendAsync("ErrorHandler", "YOUR_TURN");
                     await Clients.Users(CurrId, userId).SendAsync("START_GAME");
                 }
             }

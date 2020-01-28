@@ -56,6 +56,7 @@ namespace CoreBattle.Controllers
             _cache.Set(g.Id.ToString(), g,new MemoryCacheEntryOptions { 
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
             });
+            _cache.Set(user.Id, g.Id.ToString());
             _gameRepository.Insert(g);
             TempData["gameId"] = g.Id; 
             return RedirectToAction("Index","Games");
@@ -75,7 +76,6 @@ namespace CoreBattle.Controllers
             }
 
             game.AddBoard(player);
-            
             game.Status = GameStatus.GoesOn;
 
             try
@@ -97,6 +97,7 @@ namespace CoreBattle.Controllers
             {
                 AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
             });
+            _cache.Set(user.Id, g.Id.ToString());
             TempData["gameId"] = game.Id;
             return RedirectToAction("Index", "Games");
         }

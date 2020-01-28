@@ -10,8 +10,9 @@ namespace CoreBattle.Controllers
     {
         public IActionResult Index()
         {
-            ViewBag.gameId = TempData["gameId"];
-            return View();
+            //ViewBag.gameId = TempData["gameId"];
+            //return View();
+            return Redirect("index");
         }
     }
 }

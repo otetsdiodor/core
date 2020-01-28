@@ -42,3 +42,14 @@ body {
     width: 50%;
     transition: all .3s ease;
 }
+
+.centerBlock {
+    display: table;
+    margin: auto;
+}
+
+.ship {
+    background-color: #9b9b9b;
+    transition: all .3s ease;
+    cursor: pointer;
+}

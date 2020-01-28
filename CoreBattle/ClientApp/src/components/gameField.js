@@ -1,26 +1,25 @@
 ﻿import React, { Component } from 'react';
-import './custom.css'
-import * as signalR from "@microsoft/signalr";
+import '../custom.css'
+//import * as signalR from "@microsoft/signalr";
 
-//export class gameField(props) extends Component {
+export function GameField( props ) {
+    const gField = props.field.map(cell => {
+        let className = "battle-area-cell";
+        if (cell.state == 2 && !props.isEnemy)
+            className = "battle-area-cell ship";
+        if (cell.state == 3)
+            className = "battle-area-cell injured";
+        if (cell.state == 1)
+            className = "battle-area-cell miss";
 
-//    render() {
-//        return (
-//            <div class="player-field battle-area">
-//                <div class="battle-area-table">
-//                </div>
-//                <input class="btn btn-dark" id="readyBtn" type="submit" value="READY TO PLAY" />
-//            </div>
-//        );
-//    }
-//}
-
-export default function gameField({ field }) {
-    const gField = field.map(cell =>
-        <div key={field.id} className="battle-area-cell" pos-x={cell.X} pos-y={cell.Y}></div>
-    )
+        if (props.withClick == false) {
+            return <div className={className} pos-x={cell.x} pos-y={cell.y}></div>
+        }
+        return <div className={className} pos-x={cell.x} pos-y={cell.y} onClick={() => props.onClick(cell.x, cell.y)}></div>
+    }
+        )
 
     return ( 
-            {gField}
+        <div>{gField}</div>
     )
 }
