@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreBattle.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class StatisticController : Controller
     {
         Repository<ResultStats> _statRepository;
@@ -20,7 +20,6 @@ namespace CoreBattle.Controllers
             _statRepository = statsRepo;
         }
 
-        // GET: api/<controller>
         [HttpGet]
         public IEnumerable<ResultStats> Get(FilterModel filter)
         {
@@ -47,9 +46,11 @@ namespace CoreBattle.Controllers
 
             switch (state)
             {
-                case SortState.NameAsc: stat = stat.OrderBy(s => s.WinnerName);
+                case SortState.NameAsc:
+                    stat = stat.OrderBy(s => s.WinnerName);
                     break;
-                case SortState.NameDesc: stat =stat.OrderByDescending(s => s.WinnerName);
+                case SortState.NameDesc:
+                    stat = stat.OrderByDescending(s => s.WinnerName);
                     break;
                 case SortState.ShipAsc:
                     stat = stat.OrderBy(s => s.ShipsInfo.Count);
@@ -58,13 +59,13 @@ namespace CoreBattle.Controllers
                     stat = stat.OrderByDescending(s => s.ShipsInfo.Count);
                     break;
                 case SortState.StepsAsc:
-                     stat =stat.OrderBy(s => s.CountOfSteps);
+                    stat = stat.OrderBy(s => s.CountOfSteps);
                     break;
                 case SortState.StepsDesc:
                     stat = stat.OrderByDescending(s => s.CountOfSteps);
                     break;
                 case SortState.DateAsc:
-                    stat = stat.OrderByDescending(s => s.EndTime);
+                    stat = stat.OrderBy(s => s.EndTime);
                     break;
                 case SortState.DateDesc:
                     stat = stat.OrderByDescending(s => s.EndTime);

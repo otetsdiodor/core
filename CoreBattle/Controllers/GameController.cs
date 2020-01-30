@@ -10,7 +10,8 @@ namespace CoreBattle.Controllers
     {
         public IActionResult Index()
         {
-            return Redirect("index");
+            //return Redirect("index");
+            return View();
         }
     }
 }

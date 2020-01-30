@@ -1,0 +1,68 @@
+<h1>Статистика игр</h1>
+
+<p *ngIf="!Statistics"><em>Loading...</em></p>
+<div>
+  <form *ngIf="Statistics" [formGroup]="FilterForm" (ngSubmit)="onSubmit(FilterForm.value)">
+
+    <label for="nickname">
+      Ник:
+    </label>
+    <input id="nickname" type="text" formControlName="nickname">
+
+
+    <label for="countofships">
+      Кол-во кораблей:
+    </label>
+    <input id="countofships" type="text" formControlName="countofships">
+
+    <label for="countofsteps">
+      Кол-во шагов:
+    </label>
+    <input id="countofsteps" type="text" formControlName="countofsteps">
+
+    <label for="date">
+      Date:
+    </label>
+    <input id="date" type="text" formControlName="date">
+
+
+    <button class="button" type="submit">FILTER</button>
+
+  </form>
+</div>
+
+
+<table class='table table-striped' aria-labelledby="tableLabel" *ngIf="Statistics">
+  <thead>
+    <tr>
+      <th>
+        <a (click)="SortClick('name')">
+          Имя
+        </a>
+      </th>
+      <th>
+        <a (click)="SortClick('ships')">
+          Кол-во кораблей
+        </a>
+      </th>
+      <th>
+        <a (click)="SortClick('count')">
+          Кол-во шагов
+        </a>
+      </th>
+      <th>
+        <a (click)="SortClick('date')">
+          Дата
+        </a>
+      </th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let stat of Statistics">
+      <td>{{ stat.winnerName }}</td>
+      <td>{{ stat.shipsInfo.length}}</td>
+      <td>{{ stat.countOfSteps }}</td>
+      <td>{{ stat.endTime }}</td>
+    </tr>
+  </tbody>
+</table>

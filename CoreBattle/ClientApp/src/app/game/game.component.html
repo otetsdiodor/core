@@ -1,0 +1,22 @@
+<p>game works!</p>
+<!-- <div className="Container"> -->
+    <div className="row justify-content-center align-items-center player-field battle-area">
+        <div className="col">
+            <h2 className="centerBlock">PLAYER1</h2>
+            <div className="battle-area-table centerBlock">
+                <div *ngFor="let cell of myField" class="battle-area-cell"></div>
+            </div>
+            <input className="btn btn-dark" onClick={this.ReadyClick} id="readyBtn" type="submit" value="READY TO PLAY" />
+        </div>
+    </div>
+
+    <div className="row justify-content-center align-items-center player-field battle-area">
+        <div className="col">
+            <h2 className="centerBlock">PLAYER@</h2>
+            <div className="battle-area-table centerBlock">
+                <div *ngFor="let cell of myField" class="battle-area-cell"></div>
+            </div>
+            <input className="btn btn-dark" onClick={this.ReadyClick} id="readyBtn" type="submit" value="READY TO PLAY" />
+        </div>
+    </div>
+<!-- </div> -->
