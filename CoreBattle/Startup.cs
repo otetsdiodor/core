@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -29,8 +30,6 @@ namespace CoreBattle
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<Infrastructure.Data.AppContext>(options =>
-            //   options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
             services.AddDbContext<ApplicationContext>(options =>
@@ -54,7 +53,7 @@ namespace CoreBattle
 
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/build";
+                configuration.RootPath = "ClientApp/dist";
             });
         }
 
@@ -67,9 +66,12 @@ namespace CoreBattle
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+            if (!env.IsDevelopment())
+            {
+                app.UseSpaStaticFiles();
+            }
 
             app.UseRouting();
-            app.UseSpaStaticFiles();
             app.UseAuthentication();
             app.UseAuthorization();
 
@@ -87,7 +89,7 @@ namespace CoreBattle
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
+                    spa.UseAngularCliServer(npmScript: "start");
                 }
             });
         }
