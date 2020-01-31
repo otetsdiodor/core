@@ -1,22 +1,25 @@
-<p>game works!</p>
-<!-- <div className="Container"> -->
-    <div className="row justify-content-center align-items-center player-field battle-area">
-        <div className="col">
-            <h2 className="centerBlock">PLAYER1</h2>
-            <div className="battle-area-table centerBlock">
-                <div *ngFor="let cell of myField" class="battle-area-cell"></div>
+    <div class="row justify-content-center align-items-center player-field battle-area">
+        <div class="col">
+            <h2 class="centerBlock">{{myName}}</h2>
+            <div class="battle-area-table centerBlock">
+                <div 
+                    *ngFor="let cell of myField trackBy: trackItem" 
+                    (click)="isReady || PlaceShipClick(cell.x,cell.y)"
+                    [ngClass]="CellClass(cell.state,false)">
+                </div>
             </div>
-            <input className="btn btn-dark" onClick={this.ReadyClick} id="readyBtn" type="submit" value="READY TO PLAY" />
+            <input [hidden]="isReady" class="btn btn-dark centerBlock" (click)="ReadyClick()" type="submit" value="READY TO PLAY" />
         </div>
     </div>
 
-    <div className="row justify-content-center align-items-center player-field battle-area">
-        <div className="col">
-            <h2 className="centerBlock">PLAYER@</h2>
-            <div className="battle-area-table centerBlock">
-                <div *ngFor="let cell of myField" class="battle-area-cell"></div>
+    <div class="row justify-content-center align-items-center player-field battle-area">
+        <div class="col">
+            <h2 class="centerBlock">{{opName}}</h2>
+            <div class="battle-area-table centerBlock">
+                <div *ngFor="let cell of enField" 
+                    (click)="!isStart || ShootClick(cell.x,cell.y)"
+                    [ngClass]="CellClass(cell.state,true)">
+                </div>
             </div>
-            <input className="btn btn-dark" onClick={this.ReadyClick} id="readyBtn" type="submit" value="READY TO PLAY" />
         </div>
     </div>
-<!-- </div> -->
