@@ -1,4 +1,4 @@
-﻿import React, { Component } from 'react';
+﻿import React from 'react';
 import '../custom.css'
 
 export function GameField( props ) {

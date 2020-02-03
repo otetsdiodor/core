@@ -54,7 +54,7 @@ namespace CoreBattle
 
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/build";
+                configuration.RootPath = "React/build";
             });
         }
 
@@ -83,7 +83,7 @@ namespace CoreBattle
 
             app.UseSpa(spa =>
             {
-                spa.Options.SourcePath = "ClientApp";
+                spa.Options.SourcePath = "React";
 
                 if (env.IsDevelopment())
                 {
