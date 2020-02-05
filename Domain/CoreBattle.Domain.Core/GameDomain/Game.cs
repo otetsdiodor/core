@@ -74,23 +74,6 @@ namespace CoreBattle.Domain.Core.GameDomain
 
         public bool IsValidToStart()
         {
-            //var table = new Dictionary<int, int>
-            //{
-            //    { 1, 0 },
-            //    { 2, 0 },
-            //    { 3, 0 },
-            //    { 4, 0 }
-            //};
-            //foreach (var board in GameBoards)
-            //{
-            //    foreach (var item in board.Ships)
-            //        table[item.Length]++;
-            //}
-            //var flag = true;
-            //if (!(table[1] == 4 && table[2] == 3 && table[3] == 2 && table[4] == 1))
-            //    flag = false;
-
-            //return false;
             if (GameBoards.Count == 2 && GameBoards[0].IsReady & GameBoards[1].IsReady)
             {
                 return true;

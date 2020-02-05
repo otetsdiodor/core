@@ -26,13 +26,14 @@ export class Game extends Component {
         });
 
         conn.on("PlaceShipResult", (fiel) => {
+            console.log(fiel);
             this.setState({
                 myField: fiel
             });
         });
 
         conn.on("ReadyResult", (data) => {
-            if (data == 'OK') {
+            if (data === 'OK') {
                 this.setState({
                     isReady: true
                 });
@@ -77,10 +78,10 @@ export class Game extends Component {
     }
 
     GetEmptyField = () => {
-        let field = Array();
+        let field = [];
         for (var i = 0; i < 10; i++) {
             for (var j = 0; j < 10; j++) {
-                let f = new Object();
+                let f = {};
                 f.x = i;
                 f.y = j;
                 f.state = 0
@@ -116,11 +117,11 @@ export class Game extends Component {
 
     render() {
         let field = this.GetEmptyField();
-        if (this.state.myField.length != 0)
+        if (this.state.myField.length !== 0)
             field = this.state.myField;
 
         let enF = this.GetEmptyField();
-        if (this.state.enemyField.length != 0)
+        if (this.state.enemyField.length !== 0)
             enF = this.state.enemyField;
         return (
             <div className="Container">
