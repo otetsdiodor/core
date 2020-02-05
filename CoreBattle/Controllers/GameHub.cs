@@ -1,5 +1,6 @@
 ﻿using CoreBattle.Domain.Core.GameDomain;
 using CoreBattle.Domain.Core.ManageDomain;
+using CoreBattle.Domain.Interfaces;
 using CoreBattle.Infrastructure.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.SignalR;
@@ -16,23 +17,21 @@ namespace CoreBattle.Controllers
     {
         private IMemoryCache _cache;
         private UserManager<User> _userManager;
-        private Repository<Player> _playerRepository;
-        private Repository<ResultStats> _statRepository;
-        private Repository<Game> _gameRepository;
-        private Repository<Cell> _cellRepository;
-        private Repository<Ship> _shipRepository;
-        private Repository<StepHistory> _stepRepository;
-        private Repository<GameBoard> _gBRepository;
+        private IRepository<ResultStats> _statRepository;
+        private IRepository<Game> _gameRepository;
+        private IRepository<Cell> _cellRepository;
+        private IRepository<Ship> _shipRepository;
+        private IRepository<StepHistory> _stepRepository;
+        private IRepository<GameBoard> _gBRepository;
 
         public GameHub(IMemoryCache cache,
-            Repository<ResultStats> statRepository,
+            IRepository<ResultStats> statRepository,
             UserManager<User> userManager,
-            Repository<Player> playerRepository,
-            Repository<Game> gameRepository,
-            Repository<GameBoard> gBRepository,
-            Repository<Cell> cellRepository,
-            Repository<StepHistory> stepRepository,
-            Repository<Ship> shipRepository)
+            IRepository<Game> gameRepository,
+            IRepository<GameBoard> gBRepository,
+            IRepository<Cell> cellRepository,
+            IRepository<StepHistory> stepRepository,
+            IRepository<Ship> shipRepository)
         {
             _statRepository = statRepository;
             _stepRepository = stepRepository;
@@ -42,7 +41,6 @@ namespace CoreBattle.Controllers
             _gBRepository = gBRepository;
             _cache = cache;
             _userManager = userManager;
-            _playerRepository = playerRepository;
         }
 
         public async override Task OnConnectedAsync()

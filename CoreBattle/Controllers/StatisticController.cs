@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CoreBattle.Domain.Core.GameDomain;
-using CoreBattle.Infrastructure.Data;
+using CoreBattle.Domain.Interfaces;
 using CoreBattle.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,9 +13,9 @@ namespace CoreBattle.Controllers
     [Route("api/[controller]")]
     public class StatisticController : Controller
     {
-        Repository<ResultStats> _statRepository;
+        IRepository<ResultStats> _statRepository;
         
-        public StatisticController(Repository<ResultStats> statsRepo)
+        public StatisticController(IRepository<ResultStats> statsRepo)
         {
             _statRepository = statsRepo;
         }

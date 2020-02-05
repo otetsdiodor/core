@@ -8,7 +8,7 @@ using System.Text;
 
 namespace CoreBattle.Infrastructure.Data
 {
-    public class Repository<T> : IRepository<T> where T : Entity
+    public class Repository<T> : Domain.Interfaces.IRepository<T> where T : Entity
     {
         private readonly ApplicationContext context;
         private DbSet<T> entities;

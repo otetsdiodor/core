@@ -1,5 +1,6 @@
 ﻿using CoreBattle.Domain.Core.GameDomain;
 using CoreBattle.Domain.Core.ManageDomain;
+using CoreBattle.Domain.Interfaces;
 using CoreBattle.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -16,13 +17,13 @@ namespace CoreBattle.Controllers
     [Authorize]
     public class GameslistController : Controller
     {
-        Repository<Game> _gameRepository;
-        Repository<GameBoard> _gBRepository;
-        Repository<Player> _playerRepository;
+        IRepository<Game> _gameRepository;
+        IRepository<GameBoard> _gBRepository;
+        IRepository<Player> _playerRepository;
         private readonly UserManager<User> _userManager;
         private IMemoryCache _cache;
 
-        public GameslistController(Repository<Game> repository, UserManager<User> userManager, Repository<Player> playerRepository, IMemoryCache cache, Repository<GameBoard> gBRepository)
+        public GameslistController(IRepository<Game> repository, UserManager<User> userManager, IRepository<Player> playerRepository, IMemoryCache cache, IRepository<GameBoard> gBRepository)
         {
             _gameRepository = repository;
             _gBRepository = gBRepository;

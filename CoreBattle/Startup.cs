@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CoreBattle.Controllers;
 using CoreBattle.Domain.Core.GameDomain;
 using CoreBattle.Domain.Core.ManageDomain;
+using CoreBattle.Domain.Interfaces;
 using CoreBattle.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -39,14 +40,7 @@ namespace CoreBattle
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();
 
-
-            services.AddTransient<Repository<Game>>();
-            services.AddTransient<Repository<Cell>>();
-            services.AddTransient<Repository<Ship>>();
-            services.AddTransient<Repository<ResultStats>>();
-            services.AddTransient<Repository<GameBoard>>();
-            services.AddTransient<Repository<StepHistory>>();
-            services.AddTransient<Repository<Player>>();
+            services.AddTransient(typeof(Domain.Interfaces.IRepository<>), typeof(Repository<>));
             services.AddSignalR();
             services.AddMemoryCache();
 
