@@ -13,10 +13,6 @@ export default class App extends Component {
                 <Route path='/index/stat' component={Statistic}/>
                 <Route path='/index/game' component={Game}/>
             </Switch>
-            // <Layout>
-            //     {/* <Route path='/index' component={Game}/> */}
-            //     <Route path='/index' component={Statistic}/>
-            // </Layout>
         );
     }
 }
