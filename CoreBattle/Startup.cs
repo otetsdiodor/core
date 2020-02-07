@@ -30,12 +30,12 @@ namespace CoreBattle
 
         public void ConfigureServices(IServiceCollection services)
         {
-            //services.AddDbContext<Infrastructure.Data.AppContext>(options =>
-            //   options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddRazorPages()
                 .AddRazorRuntimeCompilation();
+            //services.AddDbContext<ApplicationContext>(options =>
+            //   options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
             services.AddDbContext<ApplicationContext>(options =>
-               options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+               options.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();
@@ -79,10 +79,11 @@ namespace CoreBattle
             {
                 spa.Options.SourcePath = "React";
 
-                if (env.IsDevelopment())
-                {
-                    spa.UseReactDevelopmentServer(npmScript: "start");
-                }
+                //if (env.IsDevelopment())
+                //{
+                //    spa.UseReactDevelopmentServer(npmScript: "start");
+                //}
+                spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
             });
         }
     }

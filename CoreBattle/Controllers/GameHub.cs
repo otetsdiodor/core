@@ -55,6 +55,7 @@ namespace CoreBattle.Controllers
             else
                 await Clients.User(Context.UserIdentifier).SendAsync("MyName", CurrentPlayer.User.NickName);
         }
+
         private void InitializeHub()
         {
             _cache.TryGetValue(Context.UserIdentifier, out string gameId);
