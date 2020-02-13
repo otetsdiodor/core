@@ -7,7 +7,7 @@ export class Statistic extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      forecasts: [],
+      loadedData: [],
       loading: true,
       Status:-1,
       nickname:"",
@@ -23,7 +23,7 @@ export class Statistic extends Component {
     this.getStatistic();
   }
 
-  renderForecastsTable = (forecasts) =>  {
+  renderTable = (data) =>  {
     return (
       <table className='table table-striped' aria-labelledby="tabelLabel">
         <thead>
@@ -35,12 +35,12 @@ export class Statistic extends Component {
           </tr>
         </thead>
         <tbody>
-          {forecasts.map(forecast =>
-            <tr key={forecast.date}>
-              <td>{forecast.winnerName}</td>
-              <td>{forecast.shipsInfo.length}</td>
-              <td>{forecast.countOfSteps}</td>
-              <td>{forecast.endTime}</td>
+          {data.map(dat =>
+              <tr key={dat.date}>
+                  <td>{dat.winnerName}</td>
+                  <td>{dat.shipsInfo.length}</td>
+                  <td>{dat.countOfSteps}</td>
+                  <td>{dat.endTime}</td>
             </tr>
           )}
         </tbody>
@@ -90,8 +90,8 @@ export class Statistic extends Component {
     
     const response = await fetch('api/statistic?'+query);
     const data = await response.json();
-    this.setState({ 
-      forecasts: data,
+      this.setState({
+      loadedData: data,
       loading: false,
       isLoaded:true
       });
@@ -133,8 +133,8 @@ export class Statistic extends Component {
       this.getStatistic();
     }
     let contents = this.state.loading
-      ? <p><em>Loading...</em></p>
-      : this.renderForecastsTable(this.state.forecasts);
+        ? <p><em>Loading...</em></p>
+        : this.renderTable(this.state.loadedData);
     let FilterForm = this.filterForm();
     return (
       <div className="container">

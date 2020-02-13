@@ -12,9 +12,9 @@ export function GameField( props ) {
             className = "battle-area-cell miss";
 
         if (props.withClick == false) {
-            return <div className={className} pos-x={cell.x} pos-y={cell.y}></div>
+            return <div className={className}></div>
         }
-        return <div className={className} pos-x={cell.x} pos-y={cell.y} onClick={() => props.onClick(cell.x, cell.y)}></div>
+        return <div className={className} onClick={() => props.onClick(cell.x, cell.y)}></div>
     }
         )
 

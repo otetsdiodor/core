@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 
-namespace CoreBattle.Controllers
+namespace CoreBattle.Hubs
 {
     public class GameHub : Hub
     {
@@ -75,18 +75,18 @@ namespace CoreBattle.Controllers
                     foreach (var cell in item.CellsRow)
                         _cellRepository.Update(cell);
 
-                var responseField = ConvertField(result.Field);
+                var responseField = ConvertFieldToSend(result.Field);
                 await Clients.User(Context.UserIdentifier).SendAsync("PlaceShipResult", responseField);
             }
             catch (Exception e)
             {
-                await Clients.User(Context.UserIdentifier).SendAsync("ErrorHandler", e.Message);
+                await Clients.User(Context.UserIdentifier).SendAsync("Alerter", e.Message);
             }
             _cache.Remove(game.Id);
             _cache.Set(game.Id.ToString(), game);
         }
 
-        private List<object> ConvertField(List<Row> field)
+        private List<object> ConvertFieldToSend(List<Row> field)
         {
             var result = new List<object>();
             foreach (var item in field)
@@ -95,17 +95,17 @@ namespace CoreBattle.Controllers
 
             return result;
         }
-        public async Task Shoot(int x,int y)
+        public async Task Shoot(int x, int y)
         {
             InitializeHub();
             try
             {
-                var ShootedCell = game.Shoot(CurrentPlayer,new Coords(x,y));
+                var ShootedCell = game.Shoot(CurrentPlayer, new Coords(x, y));
                 ShootedCell.Row = null;
                 _cellRepository.Update(ShootedCell);
                 _stepRepository.Insert(game.GameHistory.Last());
-                var myField = ConvertField(game.GameBoards.FirstOrDefault(b => b.Player.Id == CurrentPlayer.Id).Field);
-                var enField = ConvertField(game.GameBoards.FirstOrDefault(b => b.Player.Id != CurrentPlayer.Id).Field);
+                var myField = ConvertFieldToSend(game.GameBoards.FirstOrDefault(b => b.Player.Id == CurrentPlayer.Id).Field);
+                var enField = ConvertFieldToSend(game.GameBoards.FirstOrDefault(b => b.Player.Id != CurrentPlayer.Id).Field);
                 await Clients.User(CurrentPlayer.User.Id).SendAsync("ShootResult", myField, enField);
                 await Clients.User(OponentPlayer.User.Id).SendAsync("ShootResult", enField, myField);
                 if (game.IsGameEnded(CurrentPlayer))
@@ -120,7 +120,7 @@ namespace CoreBattle.Controllers
             }
             catch (Exception e)
             {
-                await Clients.User(CurrentPlayer.User.Id).SendAsync("ErrorHandler", e.Message);
+                await Clients.User(CurrentPlayer.User.Id).SendAsync("Alerter", e.Message);
             }
             _cache.Remove(game.Id);
             _cache.Set(game.Id.ToString(), game);
@@ -137,15 +137,15 @@ namespace CoreBattle.Controllers
                 if (game.IsValidToStart())
                 {
                     var startId = game.Current.User.Id;
-                    await Clients.User(startId).SendAsync("ErrorHandler", "YOUR_TURN");
+                    await Clients.User(startId).SendAsync("Alerter", "YOUR_TURN");
                     await Clients.Users(CurrentPlayer.User.Id, OponentPlayer.User.Id).SendAsync("START_GAME");
                 }
             }
             catch (Exception e)
             {
-                await Clients.User(CurrentPlayer.User.Id).SendAsync("ErrorHandler", e.Message);
+                await Clients.User(CurrentPlayer.User.Id).SendAsync("Alerter", e.Message);
             }
-            
+
             _cache.Remove(game.Id);
             _cache.Set(game.Id.ToString(), game);
 

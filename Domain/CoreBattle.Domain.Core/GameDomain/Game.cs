@@ -74,8 +74,9 @@ namespace CoreBattle.Domain.Core.GameDomain
 
         public bool IsValidToStart()
         {
-            if (GameBoards.Count == 2 && GameBoards[0].IsReady & GameBoards[1].IsReady)
+            if (GameBoards.Count == 2 && GameBoards.All(b => b.IsReady))
             {
+                Current = GameBoards[new Random().Next(0, 2)].Player;
                 return true;
             }
 

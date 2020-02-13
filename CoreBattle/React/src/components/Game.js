@@ -21,7 +21,7 @@ export class Game extends Component {
             .withUrl("/game")
             .build();
 
-        conn.on("ErrorHandler", function (msg) {
+        conn.on("Alerter", function (msg) {
             alert(msg);
         });
 

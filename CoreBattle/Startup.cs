@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CoreBattle.Controllers;
 using CoreBattle.Domain.Core.GameDomain;
 using CoreBattle.Domain.Core.ManageDomain;
 using CoreBattle.Domain.Interfaces;
+using CoreBattle.Hubs;
 using CoreBattle.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -40,7 +40,7 @@ namespace CoreBattle
             services.AddIdentity<User, IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationContext>();
 
-            services.AddTransient(typeof(Domain.Interfaces.IRepository<>), typeof(Repository<>));
+            services.AddScoped(typeof(Domain.Interfaces.IRepository<>), typeof(Repository<>));
             services.AddSignalR();
             services.AddMemoryCache();
 
@@ -79,11 +79,11 @@ namespace CoreBattle
             {
                 spa.Options.SourcePath = "React";
 
-                //if (env.IsDevelopment())
-                //{
-                //    spa.UseReactDevelopmentServer(npmScript: "start");
-                //}
-                spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
+                if (env.IsDevelopment())
+                {
+                    spa.UseReactDevelopmentServer(npmScript: "start");
+                }
+                //spa.UseProxyToSpaDevelopmentServer("http://localhost:3000");
             });
         }
     }

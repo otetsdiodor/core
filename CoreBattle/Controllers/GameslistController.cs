@@ -35,9 +35,7 @@ namespace CoreBattle.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            var lol =  _gameRepository.GetAll().Where(g => g.Status == GameStatus.Waiting);
-            lol.Load();
-            ViewBag.Games = lol;
+            ViewBag.Games = _gameRepository.GetAll().Where(g => g.Status == GameStatus.Waiting);
             return View();
         }
 
