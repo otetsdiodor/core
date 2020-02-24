@@ -7,7 +7,6 @@ namespace CoreBattle.Domain.Core.GameDomain
 {
     public class Player : Entity
     {
-        public Guid UserId { get; set; }
         public User User { get; set; }
 
         public Player(User user)

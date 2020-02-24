@@ -15,7 +15,7 @@ namespace CoreBattle.Domain.Core.GameDomain
     public class Game : Entity
     {
         private const int maxPlayerCount = 2;
-        public Player Current { get; private set; }
+        public Player Current { get; set; }
 
         public int BoardLength { get; set; }
         public List<GameBoard> GameBoards { get; set; }
@@ -43,44 +43,6 @@ namespace CoreBattle.Domain.Core.GameDomain
                 throw new ArgumentOutOfRangeException();
         }
 
-        public Cell Shoot(Player player, Coords c)
-        {
-            if (Current.Id != player.Id)
-                throw new Exception("ITS NOT YOUR TURN ALLO, ARE YOU CRAZY???????");
 
-            var result = GameBoards.Where(b => b.Player.Id != player.Id)
-                .FirstOrDefault()
-                .Shoot(c);
-            if (result.State != CellState.DamagedShip)
-                Current = GameBoards.FirstOrDefault(b => b.Player.Id != Current.Id).Player;
-
-            GameHistory.Add(new StepHistory(player, this, result));
-            return result;
-        }
-
-        public bool IsGameEnded(Player p)
-        {
-            var ships = GameBoards.Where(b => b.Player.Id != p.Id)
-                .FirstOrDefault()
-                .Ships;
-
-            foreach (var ship in ships)
-                if (ship.State != ShipState.Destroyed)
-                    return false;
-
-            Status = GameStatus.Completed;
-            return true;
-        }
-
-        public bool IsValidToStart()
-        {
-            if (GameBoards.Count == 2 && GameBoards.All(b => b.IsReady))
-            {
-                Current = GameBoards[new Random().Next(0, 2)].Player;
-                return true;
-            }
-
-            return false;
-        }
     }
 }
