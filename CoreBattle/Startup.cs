@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using CoreBattle.Domain.Core.GameDomain;
 using CoreBattle.Domain.Core.ManageDomain;
 using CoreBattle.Domain.Interfaces;
+using CoreBattle.Helpers;
 using CoreBattle.Hubs;
 using CoreBattle.Infrastructure.Data;
 using Microsoft.AspNetCore.Builder;
@@ -50,6 +51,8 @@ namespace CoreBattle
             {
                 configuration.RootPath = "React/build";
             });
+
+            services.AddScoped<GameHubInit>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

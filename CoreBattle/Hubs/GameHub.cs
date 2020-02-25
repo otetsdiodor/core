@@ -10,9 +10,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using CoreBattle.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using CoreBattle.Helpers;
 
 namespace CoreBattle.Hubs
 {
+    [ServiceFilter(typeof(GameHubInit))]
     public class GameHub : Hub
     {
         private Player CurrentPlayer;

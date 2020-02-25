@@ -1,6 +1,7 @@
 ﻿using CoreBattle.Domain.Core.GameDomain;
 using CoreBattle.Domain.Core.ManageDomain;
 using CoreBattle.Domain.Interfaces;
+using CoreBattle.Helpers;
 using CoreBattle.Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 
 namespace CoreBattle.Controllers
 {
+    [ServiceFilter(typeof(GameHubInit))]
     [Authorize]
     public class GameslistController : Controller
     {
